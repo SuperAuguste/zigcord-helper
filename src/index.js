@@ -1,6 +1,6 @@
 require("dotenv").config();
 
-const { Client, GatewayIntentBits, Partials, TextChannel } = require('discord.js');
+const { Client, GatewayIntentBits, Partials, TextChannel, MessageType } = require("discord.js");
 const client = new Client({
     intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.GuildMessageReactions],
     partials: [Partials.Message, Partials.Channel, Partials.Reaction, Partials.User],
@@ -35,8 +35,11 @@ client.on("messageReactionAdd", async reaction => {
         if (wheel) {
             await rootLogChannel.send(`<@${wheel.id}> just referred <@${message.author.id}> to <#${ZIG_HELP}>!`);
             await message.delete();
-            const dm = await message.author.createDM(true);
-            await dm.send("Please use <#1019652020308824145> to ask Zig-related questions!");
+            message.author.createDM(true).then(async dm => {
+                dm.send("Please use <#1019652020308824145> to ask Zig-related questions!");
+            }).catch(() => {
+                message.channel.send(`<@${message.author.id}>, please use <#1019652020308824145> to ask Zig-related questions!`);
+            });
         }
     } else if (reaction.emoji.name === "✅") {
         const message = await reaction.message.fetch();
