@@ -44,6 +44,7 @@ client.on("messageReactionAdd", async reaction => {
         const guild = await message.guild.fetch();
 
         if (!channel.isThread()) return;
+        if (channel.parentId !== ZIG_HELP) return;
 
         const wheel_role = await guild.roles.fetch(WHEEL_ROLE);
         const users = await reaction.users.fetch();
@@ -63,6 +64,7 @@ client.on("messageReactionRemove", async reaction => {
         const channel = await message.channel.fetch();
 
         if (!channel.isThread()) return;
+        if (channel.parentId !== ZIG_HELP) return;
         if (!channel.appliedTags.includes(ANSWERED_TAG)) return;
 
         const users = await reaction.users.fetch();
