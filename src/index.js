@@ -77,8 +77,8 @@ client.on("messageReactionRemove", async reaction => {
             const at = channel.appliedTags;
             at.splice(channel.appliedTags.indexOf(ANSWERED_TAG), 1);
 
-            await channel.setAppliedTags(at, "Author marked post as answered");
-            channel.setArchived(false);
+            await channel.setArchived(false);
+            await channel.setAppliedTags(at, "Author marked post as unanswered");
         }
     }
 });
