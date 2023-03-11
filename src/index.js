@@ -11,6 +11,7 @@ const ROOT_LOG = "973702233613008896";
 const ZIG_HELP = "1019652020308824145";
 const ANSWERED_TAG = "1055294505412198430";
 const WHEEL_ROLE = "761628228409884672";
+const ANSWER_HAVERS_ROLE = "1083852663709499522";
 
 /**
  * @type {TextChannel}
@@ -30,10 +31,11 @@ client.on("messageReactionAdd", async reaction => {
         const guild = await message.guild.fetch();
 
         const wheel_role = await guild.roles.fetch(WHEEL_ROLE);
-        const wheel = users.find(_ => wheel_role.members.has(_.id));
+        const answer_havers_role = await guild.roles.fetch(ANSWER_HAVERS_ROLE);
+        const moderator = users.find(_ => wheel_role.members.has(_.id) || answer_havers_role.members.has(_.id));
         
-        if (wheel) {
-            await rootLogChannel.send(`<@${wheel.id}> just referred <@${message.author.id}> to <#${ZIG_HELP}>!`);
+        if (moderator) {
+            await rootLogChannel.send(`<@${moderator.id}> just referred <@${message.author.id}> to <#${ZIG_HELP}>!`);
             await message.delete();
             message.author.createDM(true).then(async dm => {
                 dm.send("Please use <#1019652020308824145> to ask Zig-related questions!");
@@ -50,11 +52,14 @@ client.on("messageReactionAdd", async reaction => {
         if (channel.parentId !== ZIG_HELP) return;
 
         const wheel_role = await guild.roles.fetch(WHEEL_ROLE);
+        const answer_havers_role = await guild.roles.fetch(ANSWER_HAVERS_ROLE);
+
         const users = await reaction.users.fetch();
         const author = users.get(message.author.id);
-        const wheel = users.find(_ => wheel_role.members.has(_.id));
 
-        if (author || wheel) {
+        const moderator = users.find(_ => wheel_role.members.has(_.id) || answer_havers_role.members.has(_.id));
+
+        if (author || moderator) {
             await channel.setAppliedTags([...new Set([...channel.appliedTags, ANSWERED_TAG])], "Author marked post as answered");
             channel.setArchived(true);
         }
